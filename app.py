@@ -25,19 +25,27 @@ TEMPLATE = """
         a { color: #add8e6; }
     </style>
     <script>
-        let currentDebt = 0;
-        let nextDebt = 0;
+        let currentDebt = null;  // ← start with null
+        let nextDebt = null;
         let step = 0;
-        let frames = 60; // 60 fps
+        let frames = 60;
 
         function fetchDebt() {
             fetch('/get_debt')
                 .then(response => response.json())
                 .then(data => {
                     let numeric = Number(data.debt.replace(/[^0-9.-]+/g,""));
-                    currentDebt = nextDebt;
-                    nextDebt = numeric;
-                    step = (nextDebt - currentDebt) / frames;
+
+                    if (nextDebt === null) {
+                        // First run: initialize both values
+                        currentDebt = numeric;
+                        nextDebt = numeric;
+                        step = 0;
+                    } else {
+                        currentDebt = nextDebt;
+                        nextDebt = numeric;
+                        step = (nextDebt - currentDebt) / frames;
+                    }
                 });
         }
 
