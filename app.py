@@ -9,6 +9,7 @@ app = Flask(__name__)
 last_debt = 0
 # How much the debt increases per second (around 74400 in 2024)
 rate_per_second = 74400
+debt_lock = threading.Lock()
 
 TEMPLATE = """
 <!DOCTYPE html>
@@ -72,12 +73,12 @@ def fetch_debt():
         resp.raise_for_status()
         data = resp.json()
         if data['data']:
-            last_debt = int(float(data['data'][0]['tot_pub_debt_out_amt']))
-        else:
-            last_debt = 0
+            with debt_lock:
+                last_debt = int(float(data['data'][0]['tot_pub_debt_out_amt']))
     except Exception as e:
         print(f"Error fetching debt: {e}")
-        last_debt = 0
+        with debt_lock:
+            last_debt = 0
 
 def increase_debt():
     global last_debt
@@ -86,15 +87,20 @@ def increase_debt():
     while True:
         time.sleep(1 / updates_per_second)
         variation = random.uniform(-0.1, 0.1) * base_increment
-        last_debt += int(base_increment + variation)
+        with debt_lock:
+            last_debt += int(base_increment + variation)
 
 @app.route('/')
 def index():
-    return render_template_string(TEMPLATE, debt=f"{last_debt:,}")
+    with debt_lock:
+        current_debt = last_debt
+    return render_template_string(TEMPLATE, debt=f"{current_debt:,}")
 
 @app.route('/get_debt')
 def get_debt():
-    return {"debt": f"{last_debt:,}"}
+    with debt_lock:
+        current_debt = last_debt
+    return {"debt": f"{current_debt:,}"}
 
 if __name__ == '__main__':
     fetch_debt()
