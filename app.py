@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, jsonify
+from flask import Flask, render_template_string, jsonify, make_response
 import requests
 import time
 import threading
@@ -98,9 +98,10 @@ def index():
 
 @app.route('/get_debt')
 def get_debt():
-    with debt_lock:
-        current_debt = last_debt
-    return jsonify(debt=f"{last_debt:,}")
+    response = make_response(jsonify(debt=f"{last_debt:,}"))
+    response.headers['Cache-Control'] = 'no-store'
+    return response
+
 
 
 if __name__ == '__main__':
