@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template_string, jsonify
 import requests
 import time
 import threading
@@ -100,7 +100,8 @@ def index():
 def get_debt():
     with debt_lock:
         current_debt = last_debt
-    return {"debt": f"{current_debt:,}"}
+    return jsonify(debt=f"{last_debt:,}")
+
 
 if __name__ == '__main__':
     fetch_debt()
