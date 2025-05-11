@@ -1,25 +1,14 @@
 # Debtclock
 
 Simple Flask web app that displays the current US national debt using data from the U.S. Treasury API.
+Currently very buggy
+It works on my machine but not on my server lmao
 
-## Setup
+## Running
 
-1. (Optional) Create and activate a virtual environment:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+```pip install -r requirements.txt```
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Running the App
-
-```bash
-python app.py
-```
+```python app.py```
 
 Then open your browser to [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
