@@ -27,7 +27,7 @@ TEMPLATE = """
         let currentDebt = 0;
         let nextDebt = 0;
         let step = 0;
-        let frames = 60; // number of frames in 1 second (60fps)
+        let frames = 60; // 60 fps
 
         function fetchDebt() {
             fetch('/get_debt')
@@ -43,14 +43,14 @@ TEMPLATE = """
         function animateDebt() {
             currentDebt += step;
             // Add a small random variation to the ones place for visual dynamism
-            let variation = Math.random() * 10 - 5; // Random value between -5 and 5
+            let variation = Math.random() * 10 - 5;
             let displayDebt = Math.round(currentDebt + variation);
             document.getElementById('debt').innerText = '$' + displayDebt.toLocaleString();
         }
 
         fetchDebt(); // initial
-        setInterval(fetchDebt, 1000);     // update target debt every second
-        setInterval(animateDebt, 1000 / 60); // animate debt 60 times per second
+        setInterval(fetchDebt, 1000);
+        setInterval(animateDebt, 1000 / 60);
     </script>
 </head>
 <body>
@@ -88,11 +88,6 @@ def increase_debt():
         variation = random.uniform(-0.1, 0.1) * base_increment
         last_debt += int(base_increment + variation)
 
-def periodic_fetch():
-    while True:
-        fetch_debt()
-        time.sleep(60)
-
 @app.route('/')
 def index():
     return render_template_string(TEMPLATE, debt=f"{last_debt:,}")
@@ -104,5 +99,4 @@ def get_debt():
 if __name__ == '__main__':
     fetch_debt()
     threading.Thread(target=increase_debt, daemon=True).start()
-    threading.Thread(target=periodic_fetch, daemon=True).start()
     app.run(debug=True)
