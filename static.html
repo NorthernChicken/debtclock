@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <title>US National Debt</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #111;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 3vw;
+      color: #add8e6;
+      margin-bottom: 1em;
+      text-shadow: 0 0 15px rgba(66, 135, 245, 0.7);
+    }
+
+    .debt {
+      font-size: 8vw;
+      color: #4287f5;
+      font-weight: bold;
+      text-shadow: 0 0 30px rgba(66, 135, 245, 0.6);
+    }
+
+    p {
+      font-size: 1.2vw;
+      color: #ccc;
+      margin-top: 2em;
+    }
+
+    a {
+      color: #add8e6;
+      text-decoration: underline;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: #87cefa;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 6vw;
+      }
+      .debt {
+        font-size: 14vw;
+      }
+      p {
+        font-size: 3vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Current US National Debt</h1>
+  <div id='debt' class='debt'>$0</div>
+  <p>Source: <a href='https://fiscaldata.treasury.gov/api-documentation/' target='_blank'>U.S. Treasury API</a></p>
+
+  <script>
+    const ratePerSecond = 74400;
+    let lastDebt = 0;
+    let timestamp = Date.now();
+
+    async function fetchDebt() {
+      try {
+        const url = "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny?sort=-record_date&page[size]=1";
+        const response = await fetch(url);
+        const data = await response.json();
+        const debt = parseFloat(data.data[0].tot_pub_debt_out_amt);
+        lastDebt = debt;
+        timestamp = Date.now();
+      } catch (err) {
+        console.error("Error fetching debt:", err);
+      }
+    }
+
+    function updateDisplay() {
+      const now = Date.now();
+      const secondsElapsed = (now - timestamp) / 1000;
+      const simulatedDebt = lastDebt + secondsElapsed * ratePerSecond;
+      const variation = (Math.random() * 10) - 5;
+      const displayDebt = Math.round(simulatedDebt + variation);
+      document.getElementById("debt").innerText = "$" + displayDebt.toLocaleString();
+      requestAnimationFrame(updateDisplay);
+    }
+
+    fetchDebt();
+    setInterval(fetchDebt, 60000);
+    updateDisplay();
+  </script>
+</body>
+</html>

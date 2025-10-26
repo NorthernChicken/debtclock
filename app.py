@@ -1,3 +1,8 @@
+'''
+Ts buggy asl
+use the static HTML file instead
+'''
+
 from flask import Flask, render_template_string, jsonify, make_response
 import requests
 import time

@@ -1,8 +1,9 @@
 # Debtclock
 
-Simple Flask web app that displays the current US national debt using data from the U.S. Treasury API.
-Currently very buggy
-It works on my machine but not on my server lmao
+Flask app: Displays the current US national debt using data from the U.S. Treasury API.
+Buggy and it works on my machine but not on my server lmao
+
+Static HTML is hosted on GitHub pages and is better too
 
 ## Running
 
